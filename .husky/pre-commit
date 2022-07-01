@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-CI=true NODE_ENV=production npm run githook:precommit --since HEAD
+CI=true NODE_ENV=production npm run githook:precommit
