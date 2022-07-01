@@ -1,0 +1,19 @@
+node_modules
+.env
+coverage
+coverage.json
+.coverage_artifacts
+.coverage_cache
+.coverage_contracts
+typechain
+abi
+dist
+build
+types
+.idea
+.vscode
+
+#Hardhat files
+cache
+artifacts
+
