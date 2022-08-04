@@ -3,16 +3,15 @@
   "plugins": ["prettier"],
   "rules": {
     "avoid-suicide": "error",
-    "avoid-sha3": "warn",
-    "prettier/prettier": "off",
-    "max-line-length": ["warn", 80],
-    "quotes": ["warn", "single"],
+    "avoid-sha3": "error",
+    "max-line-length": ["error", 80],
+    "quotes": ["error", "single"],
     "func-visibility": ["error", { "ignoreConstructors": true }],
     "state-visibility": "error",
-    "reason-string": ["off", { "maxLength": 64 }],
-    "const-name-snakecase": "off",
-    "no-empty-blocks": "off",
+    "reason-string": ["error", { "maxLength": 64 }],
+    "const-name-snakecase": "error",
+    "no-empty-blocks": "error",
     "not-rely-on-time": "off",
-    "compiler-version": ["error", "^0.8.0"]
+    "compiler-version": ["error", "^0.8.10"]
   }
 }
