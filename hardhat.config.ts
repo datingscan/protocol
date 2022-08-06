@@ -24,7 +24,7 @@ const COVERAGE_CHAINID = 1337;
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.4',
+  solidity: '0.8.10',
   typechain: {
     outDir: './types',
     target: 'ethers-v5',
