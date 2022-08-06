@@ -3,25 +3,23 @@ pragma solidity ^0.8.10;
 
 import '../utils/Errors.sol';
 
-import './interfaces/IProfile.sol';
+import './IProfile.sol';
 import './ProfileLib.sol';
 
-// TODO: add docs, add proxy, add ownable interface, add pausable, check events are emitted
+// TODO: add docs, add proxy, add ownable interface, add pausable, check events are emitted, gas optimization
 contract Profile is IProfile {
-  using ProfileLib for Profile;
-
-  mapping(address => User) private usersByAddress;
+  mapping(address => ProfileLib.User) private usersByAddress;
   mapping(address => bool) private userExists;
   mapping(address => mapping(address => bool)) private matches;
   mapping(address => mapping(address => bool)) private userSeen;
 
-  event UserCreated(address indexed addr, User user);
+  event UserCreated(address indexed addr, ProfileLib.User user);
 
-  event UserUpdated(address indexed addr, User user);
+  event UserUpdated(address indexed addr, ProfileLib.User user);
 
   event Match(address indexed user, address indexed matchUser);
 
-  modifier isValidUserDataInput(User memory user) {
+  modifier isValidUserDataInput(ProfileLib.User memory user) {
     Errors.illegalValue(bytes(user.photo).length != 0);
     Errors.illegalValue(bytes(user.encryptedContact).length != 0);
     Errors.illegalValue(user.passions.length != 0 && user.passions.length < 6);
@@ -46,7 +44,7 @@ contract Profile is IProfile {
     _;
   }
 
-  function createProfile(User calldata user)
+  function createProfile(ProfileLib.User calldata user)
     external
     override
     isValidUserDataInput(user)
@@ -63,21 +61,21 @@ contract Profile is IProfile {
     external
     view
     override
-    returns (User memory)
+    returns (ProfileLib.User memory)
   {
     Errors.accessDenied(userExists[msg.sender]);
 
     return usersByAddress[userAddress];
   }
 
-  function editProfile(User memory update)
+  function editProfile(ProfileLib.User memory update)
     external
     override
     isValidUserDataInput(update)
   {
     Errors.accessDenied(userExists[msg.sender]);
 
-    User storage user = usersByAddress[msg.sender];
+    ProfileLib.User storage user = usersByAddress[msg.sender];
     user.photo = update.photo;
     user.passions = update.passions;
     user.location = update.location;
