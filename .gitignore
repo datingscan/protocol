@@ -12,6 +12,7 @@ build
 types
 .idea
 .vscode
+deployed-contracts.json
 
 #Hardhat files
 cache

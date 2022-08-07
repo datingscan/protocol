@@ -1,7 +1,7 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { ethers } from 'hardhat';
+import hre, { ethers } from 'hardhat';
 
 import { Factories, ContractKeys } from '../../helpers/factory';
 import { makeSuite } from '../../helpers/testing';
@@ -21,11 +21,13 @@ makeSuite('contacts/proxy/ProxyRegistry', () => {
         deployer,
         ContractKeys.ProxyRegistry,
         [],
+        { register: true, network: hre.network.name },
       ),
       Factories.ProfileV1.connectAndDeploy(
         deployer,
         ContractKeys.ProfileV1,
         [],
+        { register: false, network: hre.network.name },
       ),
     ]);
   });
@@ -74,6 +76,7 @@ makeSuite('contacts/proxy/ProxyRegistry', () => {
         deployer,
         ContractKeys.MockProfileV2,
         [],
+        { register: false, network: hre.network.name },
       );
       const version = await profileV2.getVersion();
 

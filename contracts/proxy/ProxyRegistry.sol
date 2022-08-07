@@ -42,12 +42,7 @@ contract ProxyRegistry is ProxyAdmin, IProxyRegistry {
 
     proxies[name] = address(proxy);
 
-    emit ProxyCreated(
-      address(proxy),
-      impl,
-      string(Strings.toString(name)),
-      params
-    );
+    emit ProxyCreated(address(proxy), impl, Strings.toString(name), params);
   }
 
   function upgradeProxy(
@@ -60,12 +55,7 @@ contract ProxyRegistry is ProxyAdmin, IProxyRegistry {
     address proxy = proxies[name];
     TransparentUpgradeableProxy(payable(proxy)).upgradeToAndCall(impl, params);
 
-    emit ProxyUpdated(
-      address(proxy),
-      impl,
-      string(Strings.toString(name)),
-      params
-    );
+    emit ProxyUpdated(address(proxy), impl, Strings.toString(name), params);
   }
 
   function getProxy(bytes32 name) public view override returns (address) {

@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { ethers } from 'hardhat';
+import hre, { ethers } from 'hardhat';
 
 import { Factories, ContractKeys } from '../../helpers/factory';
 import { makeSuite } from '../../helpers/testing';
@@ -26,6 +26,7 @@ makeSuite('contacts/match/Profile#Profile', () => {
       deployer,
       ContractKeys.ProfileV1,
       [],
+      { register: false, network: hre.network.name },
     );
   });
 
