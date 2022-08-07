@@ -5,10 +5,10 @@ import { ethers } from 'hardhat';
 import { Factories, ContractKeys } from '../../helpers/factory';
 import { makeSuite } from '../../helpers/testing';
 import { EAge, EGender } from '../../helpers/typings';
-import { Profile } from '../../types';
+import { ProfileV1 } from '../../types';
 
 makeSuite('contacts/match/Profile#Match', () => {
-  let profile: Profile;
+  let profile: ProfileV1;
   let deployer: SignerWithAddress;
   let user: SignerWithAddress;
 
@@ -23,9 +23,9 @@ makeSuite('contacts/match/Profile#Match', () => {
 
   before(async () => {
     [deployer, user] = await ethers.getSigners();
-    profile = await Factories.Profile.connectAndDeploy(
+    profile = await Factories.ProfileV1.connectAndDeploy(
       deployer,
-      ContractKeys.Profile,
+      ContractKeys.ProfileV1,
       [],
     );
   });
@@ -39,10 +39,11 @@ makeSuite('contacts/match/Profile#Match', () => {
         .then((tx) => tx.wait());
 
       await profile.like(user.address).then((tx) => tx.wait());
-      await profile
-        .connect(user)
-        .like(deployer.address)
-        .then((tx) => tx.wait());
+
+      await expect(profile.connect(user).like(deployer.address)).to.emit(
+        profile,
+        'Match',
+      );
 
       expect(await profile.isMatch(user.address)).to.equal(true);
       expect(await profile.connect(user).isMatch(deployer.address)).to.equal(
