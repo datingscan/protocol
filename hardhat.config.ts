@@ -63,8 +63,8 @@ const mainnetFork = () => {
   }
 
   const url =
-    NETWORKS_RPC_URL[FORK_NETWORK as ENetwork] ||
-    FORK_URLS[FORK_NETWORK as ENetwork];
+    FORK_URLS[FORK_NETWORK as ENetwork] ||
+    NETWORKS_RPC_URL[FORK_NETWORK as ENetwork];
 
   if (!url) {
     throw new Error(`Unknown network to fork: ${FORK_NETWORK}`);

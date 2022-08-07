@@ -23,6 +23,7 @@
     "deploy:matic:fork": "FORK=matic hardhat run scripts/deploy.ts",
     "deploy:mumbai:fork": "FORK=mumbai hardhat run scripts/deploy.ts",
     "test-deploy:hardhat": "hardhat run scripts/deploy.ts",
+    "contracts-size": "hardhat size-contracts",
     "build:package": "rm -rf ./dist && tsc -p tsconfig.build.json && cp types/*.d.ts dist/types && cp -R artifacts dist && cp -R contracts dist",
     "ci:test": "npm run compile && npm run test",
     "ci:clean": "rm -rf ./artifacts ./cache ./types ./dist",
