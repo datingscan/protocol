@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.15;
+
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
 import '../utils/Errors.sol';
 
 import './IProfile.sol';
 import './ProfileLib.sol';
 
-// TODO: add docs, add proxy, add ownable interface, add pausable, check events are emitted, gas optimization
-contract Profile is IProfile {
+// TODO: add docs, gas optimization
+contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
   mapping(address => ProfileLib.User) private usersByAddress;
   mapping(address => bool) private userExists;
   mapping(address => mapping(address => bool)) private matches;
@@ -44,10 +47,16 @@ contract Profile is IProfile {
     _;
   }
 
+  function initialze() internal {
+    __Ownable_init();
+    __Pausable_init();
+  }
+
   function createProfile(ProfileLib.User calldata user)
     external
     override
     isValidUserDataInput(user)
+    whenNotPaused
   {
     Errors.accessDenied(!userExists[msg.sender]);
 
@@ -72,6 +81,7 @@ contract Profile is IProfile {
     external
     override
     isValidUserDataInput(update)
+    whenNotPaused
   {
     Errors.accessDenied(userExists[msg.sender]);
 
@@ -89,6 +99,7 @@ contract Profile is IProfile {
     external
     override
     isValidMatch(user)
+    whenNotPaused
     returns (bool)
   {
     Errors.accessDenied(!userSeen[msg.sender][user]);
@@ -109,6 +120,7 @@ contract Profile is IProfile {
     external
     override
     isValidMatch(user)
+    whenNotPaused
     returns (bool)
   {
     Errors.accessDenied(!userSeen[msg.sender][user]);

@@ -12,6 +12,6 @@
     "const-name-snakecase": "error",
     "no-empty-blocks": "error",
     "not-rely-on-time": "off",
-    "compiler-version": ["error", "^0.8.10"]
+    "compiler-version": ["error", "^0.8.15"]
   }
 }

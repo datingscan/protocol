@@ -5,10 +5,10 @@ import { ethers } from 'hardhat';
 import { Factories, ContractKeys } from '../../helpers/factory';
 import { makeSuite } from '../../helpers/testing';
 import { EAge, EGender } from '../../helpers/typings';
-import { Profile } from '../../types';
+import { ProfileV1 } from '../../types';
 
 makeSuite('contacts/match/Profile#Profile', () => {
-  let profile: Profile;
+  let profile: ProfileV1;
   let deployer: SignerWithAddress;
 
   const defaultUser = {
@@ -22,17 +22,19 @@ makeSuite('contacts/match/Profile#Profile', () => {
 
   before(async () => {
     [deployer] = await ethers.getSigners();
-    profile = await Factories.Profile.connectAndDeploy(
+    profile = await Factories.ProfileV1.connectAndDeploy(
       deployer,
-      ContractKeys.Profile,
+      ContractKeys.ProfileV1,
       [],
     );
   });
 
   describe('create new profile', () => {
     it('should create new profile for user', async () => {
-      const tx = await profile.createProfile(defaultUser);
-      await tx.wait();
+      await expect(profile.createProfile(defaultUser)).to.emit(
+        profile,
+        'UserCreated',
+      );
 
       const { photo, encryptedContact, passions, location, gender, age } =
         await profile.getUser(deployer.address);
@@ -108,8 +110,10 @@ makeSuite('contacts/match/Profile#Profile', () => {
       const createTx = await profile.createProfile(defaultUser);
       await createTx.wait();
 
-      const updateTx = await profile.editProfile(defaultUpdate);
-      await updateTx.wait();
+      await expect(profile.editProfile(defaultUpdate)).to.emit(
+        profile,
+        'UserUpdated',
+      );
 
       const user = await profile.getUser(deployer.address);
 
