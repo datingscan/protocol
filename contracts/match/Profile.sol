@@ -9,12 +9,18 @@ import '../utils/Errors.sol';
 import './IProfile.sol';
 import './ProfileLib.sol';
 
-// TODO: add docs, gas optimization
+// TODO: add docs, gas optimization, hide matches from user
 contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
+  uint256 private maxLikeCount;
+  uint32 private constant BLOCK_OFFSET = 86400;
+
   mapping(address => ProfileLib.User) private usersByAddress;
   mapping(address => bool) private userExists;
   mapping(address => mapping(address => bool)) private matches;
   mapping(address => mapping(address => bool)) private userSeen;
+  mapping(address => bool) private deactivatedUsers;
+  mapping(address => uint256) private likes;
+  mapping(address => uint256) private likeTimestamps;
 
   event UserCreated(address indexed addr, ProfileLib.User user);
 
@@ -23,31 +29,23 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
   event Match(address indexed user, address indexed matchUser);
 
   modifier isValidUserDataInput(ProfileLib.User memory user) {
-    Errors.illegalValue(bytes(user.photo).length != 0);
-    Errors.illegalValue(bytes(user.encryptedContact).length != 0);
-    Errors.illegalValue(user.passions.length != 0 && user.passions.length < 6);
-    Errors.illegalValue(
-      bytes(user.location.lat).length != 0 &&
-        bytes(user.location.lon).length != 0
-    );
-
-    for (uint256 index = 0; index < user.passions.length; index++) {
-      string memory passion = user.passions[index];
-      Errors.illegalValue(bytes(passion).length != 0);
-    }
-
+    _checkInvalidData(user);
     _;
   }
 
   modifier isValidMatch(address user) {
-    Errors.illegalValue(user != address(0));
-    Errors.accessDenied(userExists[msg.sender]);
-    Errors.accessDenied(userExists[user]);
+    _checkValidMatch(user);
+    _;
+  }
 
+  modifier whenNotDeactivated(address user) {
+    _checkDeactivated(user);
     _;
   }
 
   function initialze() internal {
+    maxLikeCount = 5;
+
     __Ownable_init();
     __Pausable_init();
   }
@@ -62,6 +60,7 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
 
     usersByAddress[msg.sender] = user;
     userExists[msg.sender] = true;
+    likes[msg.sender] = 0;
 
     emit UserCreated(msg.sender, user);
   }
@@ -70,6 +69,7 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     external
     view
     override
+    whenNotDeactivated(msg.sender)
     returns (ProfileLib.User memory)
   {
     Errors.accessDenied(userExists[msg.sender]);
@@ -81,6 +81,7 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     external
     override
     isValidUserDataInput(update)
+    whenNotDeactivated(msg.sender)
     whenNotPaused
   {
     Errors.accessDenied(userExists[msg.sender]);
@@ -95,17 +96,42 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     emit UserUpdated(msg.sender, user);
   }
 
-  function like(address user)
+  function _checkInvalidData(ProfileLib.User memory user) private pure {
+    Errors.illegalValue(bytes(user.photo).length != 0);
+    Errors.illegalValue(bytes(user.encryptedContact).length != 0);
+    Errors.illegalValue(user.passions.length != 0 && user.passions.length < 6);
+    Errors.illegalValue(
+      bytes(user.location.lat).length != 0 &&
+        bytes(user.location.lon).length != 0
+    );
+
+    for (uint256 index = 0; index < user.passions.length; index++) {
+      string memory passion = user.passions[index];
+      Errors.illegalValue(bytes(passion).length != 0);
+    }
+  }
+
+  function like(address user, bool isLike)
     external
     override
     isValidMatch(user)
+    whenNotDeactivated(msg.sender)
     whenNotPaused
     returns (bool)
   {
+    Errors.illegalValue(msg.sender != user);
     Errors.accessDenied(!userSeen[msg.sender][user]);
 
-    matches[msg.sender][user] = true;
+    if (likeTimestamps[msg.sender] + BLOCK_OFFSET < block.timestamp) {
+      likes[msg.sender] = 0;
+    }
+
+    Errors.accessDenied(likes[msg.sender] < maxLikeCount);
+
+    matches[msg.sender][user] = isLike;
     userSeen[msg.sender][user] = true;
+    likes[msg.sender] += 1;
+    likeTimestamps[msg.sender] = block.timestamp;
 
     bool mutulalMatch = isMatch(user);
 
@@ -116,23 +142,43 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     return mutulalMatch;
   }
 
-  function dislike(address user)
-    external
-    override
-    isValidMatch(user)
-    whenNotPaused
-    returns (bool)
-  {
-    Errors.accessDenied(!userSeen[msg.sender][user]);
-
-    matches[msg.sender][user] = false;
-    userSeen[msg.sender][user] = true;
-
-    return false;
+  function _checkValidMatch(address user) private view {
+    Errors.illegalValue(user != address(0));
+    Errors.accessDenied(userExists[msg.sender] && userExists[user]);
   }
 
-  function isMatch(address user) public view returns (bool) {
+  function _checkDeactivated(address user) private view {
+    Errors.accessDenied(!deactivatedUsers[user]);
+  }
+
+  function isMatch(address user)
+    public
+    view
+    whenNotDeactivated(msg.sender)
+    returns (bool)
+  {
     return
       matches[msg.sender][user] == true && matches[user][msg.sender] == true;
+  }
+
+  function getRemainingLikesCount() public view returns (uint256) {
+    if (likeTimestamps[msg.sender] + BLOCK_OFFSET < block.timestamp) {
+      return maxLikeCount;
+    }
+
+    return maxLikeCount - likes[msg.sender];
+  }
+
+  function activateUser(address user) external onlyOwner {
+    deactivatedUsers[user] = false;
+  }
+
+  function deactivateUser(address user) external onlyOwner {
+    deactivatedUsers[user] = true;
+  }
+
+  function setLikeCount(uint256 count) external onlyOwner {
+    Errors.illegalValue(count > 0);
+    maxLikeCount = count;
   }
 }

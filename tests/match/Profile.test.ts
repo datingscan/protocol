@@ -28,6 +28,8 @@ makeSuite('contacts/match/Profile#Profile', () => {
       [],
       { register: false, network: hre.network.name },
     );
+
+    await profile.initializeProfile().then((tx) => tx.wait());
   });
 
   describe('create new profile', () => {
@@ -127,7 +129,7 @@ makeSuite('contacts/match/Profile#Profile', () => {
       expect(user.location.lon).to.equal(defaultUpdate.location.lon);
     });
 
-    it('should revert when creating new profile with invalid data', async () => {
+    it('should revert when editing new profile with invalid data', async () => {
       await expect(profile.editProfile({ ...defaultUpdate, photo: '' }))
         .reverted;
 
@@ -160,7 +162,7 @@ makeSuite('contacts/match/Profile#Profile', () => {
       ).reverted;
     });
 
-    it('should revert when editting unregistered user', async () => {
+    it('should revert when editing unregistered user', async () => {
       await expect(profile.editProfile(defaultUpdate)).reverted;
     });
   });

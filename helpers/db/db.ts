@@ -99,3 +99,7 @@ export function getEntityByAddress(
 
   return entity?.instance[id] ?? null;
 }
+
+export function clearDB(network: string): void {
+  DB.set(network, undefined).write();
+}
