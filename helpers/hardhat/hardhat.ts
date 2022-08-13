@@ -1,17 +1,21 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 
-import { EPolygonNetwork, ENetwork } from '../typings';
+import { EPolygonNetwork, ENetwork, EEthereumNetwork } from '../typings';
 
 const GWEI = 1000 * 1000 * 1000;
 
-export const NETWORKS_DEFAULT_GAS: Record<ENetwork, number> = {
-  [EPolygonNetwork.MUMBAI]: gasPrice(1),
+export const NETWORKS_DEFAULT_GAS: Record<ENetwork, number | 'auto'> = {
+  [EPolygonNetwork.MUMBAI]: gasPrice(2),
   [EPolygonNetwork.MATIC]: gasPrice(2),
+  [EEthereumNetwork.GOERLI]: gasPrice(2),
 };
 
-export const NETWORKS_RPC_URL: Record<ENetwork, string> = {
-  [EPolygonNetwork.MUMBAI]: 'https://rpc-mumbai.maticvigil.com',
-  [EPolygonNetwork.MATIC]: 'https://rpc-mainnet.matic.network',
+export const NETWORKS_RPC_URL: Record<ENetwork, string | undefined> = {
+  [EPolygonNetwork.MATIC]: 'https://rpc.ankr.com/polygon',
+  [EPolygonNetwork.MUMBAI]: 'https://rpc.ankr.com/polygon_mumbai',
+  [EEthereumNetwork.GOERLI]: process.env.GOERLI_INFURA_KEY
+    ? `https://goerli.infura.io/v3/${process.env.GOERLI_INFURA_KEY}`
+    : undefined,
 };
 
 export const FORK_URLS: Record<ENetwork, string | undefined> = {
@@ -20,6 +24,9 @@ export const FORK_URLS: Record<ENetwork, string | undefined> = {
     : undefined,
   [EPolygonNetwork.MUMBAI]: process.env.MUMBAI_ALCHEMY_KEY
     ? `https://polygon-mumbai.g.alchemy.com/v2/${process.env.MUMBAI_ALCHEMY_KEY}`
+    : undefined,
+  [EEthereumNetwork.GOERLI]: process.env.GOERLI_INFURA_KEY
+    ? `https://goerli.infura.io/v3/${process.env.GOERLI_INFURA_KEY}`
     : undefined,
 };
 

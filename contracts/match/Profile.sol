@@ -72,8 +72,6 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     whenNotDeactivated(msg.sender)
     returns (ProfileLib.User memory)
   {
-    Errors.accessDenied(userExists[msg.sender]);
-
     return usersByAddress[userAddress];
   }
 

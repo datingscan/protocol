@@ -16,10 +16,12 @@
     "solidity"
   ],
   "scripts": {
+    "hardhat:goerli": "hardhat run --network goerli",
     "hardhat:matic": "hardhat run --network matic",
     "hardhat:mumbai": "hardhat run --network mumbai",
-    "deploy:matic": "npm run compile && npm run hardhat:main -- scripts/deploy.ts",
-    "deploy:mumbai": "npm run compile && npm run hardhat:ropsten -- scripts/deploy.ts",
+    "deploy:goerli": "npm run compile && npm run hardhat:goerli -- scripts/deploy.ts",
+    "deploy:matic": "npm run compile && npm run hardhat:matic -- scripts/deploy.ts",
+    "deploy:mumbai": "npm run compile && npm run hardhat:mumbai -- scripts/deploy.ts",
     "deploy:matic:fork": "FORK=matic hardhat run scripts/deploy.ts",
     "deploy:mumbai:fork": "FORK=mumbai hardhat run scripts/deploy.ts",
     "test-deploy:hardhat": "hardhat run scripts/deploy.ts",

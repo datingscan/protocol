@@ -90,10 +90,6 @@ makeSuite('contacts/match/Profile#Profile', () => {
         }),
       ).reverted;
     });
-
-    it('should revert when getting unregistered user', async () => {
-      await expect(profile.getUser(deployer.address)).reverted;
-    });
   });
 
   describe('edit profile', () => {

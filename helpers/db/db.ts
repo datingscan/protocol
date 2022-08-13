@@ -63,6 +63,7 @@ export function saveEntity(
 
   if (contract.deployTransaction) {
     console.log(`tx: ${contract.deployTransaction.hash}`);
+    console.log(`nonce: ${contract.deployTransaction.nonce}`);
     console.log(`deployer address: ${contract.deployTransaction.from}`);
     console.log(
       `gas price: ${contract.deployTransaction.gasPrice?.toString() ?? ''}`,

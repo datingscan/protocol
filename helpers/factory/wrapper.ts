@@ -25,6 +25,8 @@ export function wrapFactory<TArgs extends unknown[], TResult extends Contract>(
 
       saveEntity(name, network, contract, register, args);
 
+      await contract.deployed();
+
       return contract;
     }
 
