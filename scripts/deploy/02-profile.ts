@@ -23,8 +23,6 @@ task('deploy:profile', 'Deploy Profile contract').setAction(async (_, env) => {
     { register: false, network },
   );
 
-  await profileV1.deployed();
-
   await proxyRegistry
     .createProxy(
       profileV1.address,
@@ -36,6 +34,7 @@ task('deploy:profile', 'Deploy Profile contract').setAction(async (_, env) => {
   const proxiedProfileAddress = await proxyRegistry.getProxy(
     formatBytes32String(ContractKeys.Profile),
   );
+
   const proxiedProfile = Factories.Profile.attach(
     deployer,
     proxiedProfileAddress,

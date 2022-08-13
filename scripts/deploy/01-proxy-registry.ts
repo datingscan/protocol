@@ -9,13 +9,11 @@ task('deploy:proxy-registry', 'Deploy ProxyRegistry contract').setAction(
     const [deployer] = await ethers.getSigners();
     const network = getNetworkFromEnv(env);
 
-    const proxyRegistry = await Factories.ProxyRegistry.connectAndDeploy(
+    await Factories.ProxyRegistry.connectAndDeploy(
       deployer,
       ContractKeys.ProxyRegistry,
       [],
       { register: true, network },
     );
-
-    await proxyRegistry.deployed();
   },
 );

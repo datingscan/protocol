@@ -14,35 +14,38 @@ import {
   NETWORKS_DEFAULT_GAS,
   NETWORKS_RPC_URL,
 } from './helpers/hardhat';
-import { EChainID, ENetwork, EPolygonNetwork } from './helpers/typings';
+import {
+  EChainID,
+  EEthereumNetwork,
+  ENetwork,
+  EPolygonNetwork,
+} from './helpers/typings';
 import './scripts/accounts';
 
-dotenv.config();
+dotenv.config({ path: '.env' });
 
 const COVERAGE_CHAINID = 1337;
 const BUIDLEREVM_CHAINID = 31337;
-const HARDFORK = 'istanbul';
+const HARDFORK = 'arrowGlacier';
 const MNEMONIC_PATH = "m/44'/60'/0'/0";
 const MNEMONIC = process.env.MNEMONIC || '';
-const DEFAULT_BLOCK_GAS_LIMIT = 7000000;
+const DEFAULT_BLOCK_GAS_LIMIT = 7_000_000;
 const DEFAULT_GAS_MUL = 2;
 const FORK_NETWORK = process.env.FORK;
-const IS_FORK = !!FORK_NETWORK;
-const MNEMONIC_MAIN_PHRASE = IS_FORK ? MNEMONIC : process.env.MNEMONIC_MAIN;
 
 const getCommonNetworkConfig = (
   networkName: ENetwork,
   networkId: EChainID,
-  mnemonic?: string,
 ) => ({
-  url: NETWORKS_RPC_URL[networkName],
+  url: NETWORKS_RPC_URL[networkName] ?? '',
   hardfork: HARDFORK,
   blockGasLimit: DEFAULT_BLOCK_GAS_LIMIT,
+  gas: DEFAULT_BLOCK_GAS_LIMIT,
   gasMultiplier: DEFAULT_GAS_MUL,
   gasPrice: NETWORKS_DEFAULT_GAS[networkName],
   chainId: networkId,
   accounts: {
-    mnemonic: mnemonic || MNEMONIC,
+    mnemonic: MNEMONIC,
     path: MNEMONIC_PATH,
     initialIndex: 0,
     count: 20,
@@ -94,11 +97,8 @@ const config: HardhatUserConfig = {
       url: 'http://localhost:8555',
       chainId: COVERAGE_CHAINID,
     },
-    matic: getCommonNetworkConfig(
-      EPolygonNetwork.MATIC,
-      EChainID.MATIC,
-      MNEMONIC_MAIN_PHRASE,
-    ),
+    goerli: getCommonNetworkConfig(EEthereumNetwork.GOERLI, EChainID.GOERLI),
+    matic: getCommonNetworkConfig(EPolygonNetwork.MATIC, EChainID.MATIC),
     mumbai: getCommonNetworkConfig(EPolygonNetwork.MUMBAI, EChainID.MUMBAI),
     matic_fork: getForkConfig(EPolygonNetwork.MATIC),
     mumbai_fork: getForkConfig(EPolygonNetwork.MUMBAI),
