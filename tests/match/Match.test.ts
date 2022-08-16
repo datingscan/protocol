@@ -17,7 +17,9 @@ makeSuite('contacts/match/Profile#Match', () => {
     photo: 'photo',
     encryptedContact: 'encrypted',
     passions: ['#crypto', '#ethereum', '#hodl'],
-    location: { lat: '0', lon: '0' },
+    location: 'City, State, Country',
+    lat: '0',
+    lon: '0',
     gender: EGender.FEMALE,
     age: EAge.BATTLE_SEASONED,
   };

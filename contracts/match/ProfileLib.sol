@@ -8,14 +8,11 @@ library ProfileLib {
     string photo;
     string encryptedContact;
     string[] passions;
-    Location location;
-    EGender gender;
-    EAge age;
-  }
-
-  struct Location {
+    string location;
     string lat;
     string lon;
+    EGender gender;
+    EAge age;
   }
 
   enum EGender {
