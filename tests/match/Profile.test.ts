@@ -15,7 +15,9 @@ makeSuite('contacts/match/Profile#Profile', () => {
     photo: 'photo',
     encryptedContact: 'encrypted',
     passions: ['#crypto', '#ethereum', '#hodl'],
-    location: { lat: '0', lon: '0' },
+    location: 'City, State, Country',
+    lat: '0',
+    lon: '0',
     gender: EGender.FEMALE,
     age: EAge.BATTLE_SEASONED,
   };
@@ -39,16 +41,25 @@ makeSuite('contacts/match/Profile#Profile', () => {
         'UserCreated',
       );
 
-      const { photo, encryptedContact, passions, location, gender, age } =
-        await profile.getUser(deployer.address);
+      const {
+        photo,
+        encryptedContact,
+        passions,
+        location,
+        lat,
+        lon,
+        gender,
+        age,
+      } = await profile.getUser(deployer.address);
 
       expect(photo).to.equal(defaultUser.photo);
       expect(encryptedContact).to.equal(defaultUser.encryptedContact);
       expect(passions).to.deep.equal(defaultUser.passions);
       expect(gender).to.equal(defaultUser.gender);
       expect(age).to.equal(defaultUser.age);
-      expect(location.lat).to.equal(defaultUser.location.lat);
-      expect(location.lon).to.equal(defaultUser.location.lon);
+      expect(location).to.equal(defaultUser.location);
+      expect(lat).to.equal(defaultUser.lat);
+      expect(lon).to.equal(defaultUser.lon);
     });
 
     it('should revert when creating new profile twice', async () => {
@@ -86,7 +97,9 @@ makeSuite('contacts/match/Profile#Profile', () => {
       await expect(
         profile.createProfile({
           ...defaultUser,
-          location: { lat: '', lon: '' },
+          location: '',
+          lat: '',
+          lon: '',
         }),
       ).reverted;
     });
@@ -99,10 +112,9 @@ makeSuite('contacts/match/Profile#Profile', () => {
       passions: ['1', '2', '3'],
       gender: EGender.MALE,
       age: EAge.ELDER,
-      location: {
-        lat: '1',
-        lon: '2',
-      },
+      lat: '1',
+      lon: '2',
+      location: 'City 1, State 1, Country 1',
     };
 
     it('should edit profile for user', async () => {
@@ -121,8 +133,9 @@ makeSuite('contacts/match/Profile#Profile', () => {
       expect(user.passions).to.deep.equal(defaultUpdate.passions);
       expect(user.gender).to.equal(defaultUpdate.gender);
       expect(user.age).to.equal(defaultUpdate.age);
-      expect(user.location.lat).to.equal(defaultUpdate.location.lat);
-      expect(user.location.lon).to.equal(defaultUpdate.location.lon);
+      expect(user.location).to.equal(defaultUpdate.location);
+      expect(user.lat).to.equal(defaultUpdate.lat);
+      expect(user.lon).to.equal(defaultUpdate.lon);
     });
 
     it('should revert when editing new profile with invalid data', async () => {
@@ -153,7 +166,9 @@ makeSuite('contacts/match/Profile#Profile', () => {
       await expect(
         profile.editProfile({
           ...defaultUpdate,
-          location: { lat: '', lon: '' },
+          location: '',
+          lon: '',
+          lat: '',
         }),
       ).reverted;
     });

@@ -88,6 +88,8 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     user.photo = update.photo;
     user.passions = update.passions;
     user.location = update.location;
+    user.lat = update.lat;
+    user.lon = update.lon;
     user.gender = update.gender;
     user.age = update.age;
 
@@ -99,8 +101,9 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     Errors.illegalValue(bytes(user.encryptedContact).length != 0);
     Errors.illegalValue(user.passions.length != 0 && user.passions.length < 6);
     Errors.illegalValue(
-      bytes(user.location.lat).length != 0 &&
-        bytes(user.location.lon).length != 0
+      bytes(user.location).length != 0 &&
+        bytes(user.lat).length != 0 &&
+        bytes(user.lon).length != 0
     );
 
     for (uint256 index = 0; index < user.passions.length; index++) {
