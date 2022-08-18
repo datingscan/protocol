@@ -159,6 +159,8 @@ makeSuite('contacts/match/Profile#Match', () => {
         .connect(deployer)
         .setLikeCount(1)
         .then((tx) => tx.wait());
+
+      expect(await profile.getMaxLikeCount()).to.equal(1);
     });
 
     it('should set like count properly', async () => {

@@ -170,6 +170,10 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     return maxLikeCount - likes[msg.sender];
   }
 
+  function getMaxLikeCount() public view returns (uint256) {
+    return maxLikeCount;
+  }
+
   function activateUser(address user) external onlyOwner {
     deactivatedUsers[user] = false;
   }
