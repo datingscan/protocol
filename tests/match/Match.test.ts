@@ -44,12 +44,11 @@ makeSuite('contacts/match/Profile#Match', () => {
         .createProfile(defaultUser)
         .then((tx) => tx.wait());
 
-      await profile.like(user1.address, true).then((tx) => tx.wait());
+      await expect(profile.like(user1.address, true)).to.emit(profile, 'Seen');
 
-      await expect(profile.connect(user1).like(deployer.address, true)).to.emit(
-        profile,
-        'Match',
-      );
+      const result = profile.connect(user1).like(deployer.address, true);
+      await expect(result).to.emit(profile, 'Match');
+      await expect(result).to.emit(profile, 'Seen');
 
       expect(await profile.isMatch(user1.address)).to.equal(true);
       expect(await profile.connect(user1).isMatch(deployer.address)).to.equal(
@@ -96,11 +95,10 @@ makeSuite('contacts/match/Profile#Match', () => {
         .createProfile(defaultUser)
         .then((tx) => tx.wait());
 
-      await profile.like(user1.address, false).then((tx) => tx.wait());
-      await profile
-        .connect(user1)
-        .like(deployer.address, false)
-        .then((tx) => tx.wait());
+      await expect(profile.like(user1.address, false)).to.emit(profile, 'Seen');
+      await expect(
+        profile.connect(user1).like(deployer.address, false),
+      ).to.emit(profile, 'Seen');
 
       expect(await profile.isMatch(user1.address)).to.equal(false);
       expect(await profile.connect(user1).isMatch(deployer.address)).to.equal(

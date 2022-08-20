@@ -28,6 +28,8 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
 
   event Match(address indexed user, address indexed matchUser);
 
+  event Seen(address indexed user, address indexed matchUser);
+
   modifier isValidUserDataInput(ProfileLib.User memory user) {
     _checkInvalidData(user);
     _;
@@ -139,6 +141,8 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     if (mutulalMatch) {
       emit Match(msg.sender, user);
     }
+
+    emit Seen(msg.sender, user);
 
     return mutulalMatch;
   }
