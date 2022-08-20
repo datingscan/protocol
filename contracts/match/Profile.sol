@@ -28,7 +28,7 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
 
   event Match(address indexed user, address indexed matchUser);
 
-  event Seen(address indexed user, address indexed matchUser);
+  event Seen(address indexed user, address indexed seenUser);
 
   modifier isValidUserDataInput(ProfileLib.User memory user) {
     _checkInvalidData(user);
