@@ -1,6 +1,6 @@
 {
   "name": "datingscan-protocol",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "datingscan smart contracts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
