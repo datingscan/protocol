@@ -120,7 +120,6 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     isValidMatch(user)
     whenNotDeactivated(msg.sender)
     whenNotPaused
-    returns (bool)
   {
     Errors.illegalValue(msg.sender != user);
     Errors.accessDenied(!userSeen[msg.sender][user]);
@@ -143,8 +142,6 @@ contract Profile is IProfile, OwnableUpgradeable, PausableUpgradeable {
     }
 
     emit Seen(msg.sender, user);
-
-    return mutulalMatch;
   }
 
   function _checkValidMatch(address user) private view {
