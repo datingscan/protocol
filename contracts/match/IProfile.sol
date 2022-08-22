@@ -10,7 +10,7 @@ interface IProfile {
 
   function editProfile(ProfileLib.User memory user) external;
 
-  function like(address user, bool isLike) external returns (bool);
+  function like(address user, bool isLike) external;
 
   function isMatch(address user) external view returns (bool);
 
